@@ -1,5 +1,5 @@
 
-
+#Importing libs
 import os 
 import json
 import pandas as pd
@@ -8,19 +8,19 @@ from langchain.agents import create_pandas_dataframe_agent
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 
-
+#Reading your openia api
 openai_key = json.load(open('credentials.json'))['openai']
 os.environ['OPENAI_API_KEY'] = json.load(open('credentials.json'))['openai']
 
-
+#Reading data
 df_carbon = pd.read_csv('Datasets/hourly_42101_2022.zip')
 df_brightness = pd.read_csv('Datasets/modis_2022_United_States.csv')
 
+#Creating the agent
 llm = OpenAI(model_name='gpt-4', temperature=0)
-
 stats_agent = create_pandas_dataframe_agent(llm, [df_carbon, df_brightness], verbose=True)
 
-
+#Creating the Tool
 tools = [
     Tool(
         name = "Stats Agent",
@@ -29,7 +29,6 @@ tools = [
         return_direct=True
     ),
 ]
-
 agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True,  handle_parsing_errors=True)
 
 #Example
